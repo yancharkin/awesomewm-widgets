@@ -10,7 +10,7 @@ local FONT = "Source\ Code\ Pro Regular 16"
 local W_HOT = 29
 local W_COLD = -5
 local COLOR_HOT = "'#ffa560'"
-local COLOR_OK = "'#cdf3cd'"
+local COLOR_NORMAL = "'#cdf3cd'"
 local COLOR_COLD = "'#65c4ff'"
 
 local icons_list = {
@@ -30,9 +30,9 @@ local weather_checker = wibox.widget {
     layout = wibox.layout.fixed.horizontal
 }
 
-function recolor_icons(color)
+function recolor_icons(color, dir)
     for i, filename in ipairs(icons_list) do
-        filepath = ROOT.."/images/"..filename
+        filepath = ROOT.."/images/"..dir.."/"..filename
         new_content = {}
         f = io.open(filepath, "r")
         for line in io.lines(filepath) do
@@ -53,20 +53,28 @@ function recolor_icons(color)
     end
 end
 
+recolor_icons(COLOR_HOT, "hot")
+recolor_icons(COLOR_NORMAL, "normal")
+recolor_icons(COLOR_COLD, "cold")
+
 function update_weather_indicator(data)
     temperature, icon_name = data:match("([^,]+),([^,]+)")
-    temperature_striped = temperature:gsub("˚", "")
-    temperature_number = tonumber(temperature_striped)
-    icon_name = icon_name:gsub("\n", "")
-    COLOR = COLOR_OK
-    if temperature_number >= W_HOT then
-        COLOR = COLOR_HOT
-    elseif temperature_number <= W_COLD then
-        COLOR = COLOR_COLD
+    if temperature ~= nil then
+        temperature_striped = temperature:gsub("˚", "")
+        temperature_number = tonumber(temperature_striped)
+        icon_name = icon_name:gsub("\n", "")
+        if temperature_number >= W_HOT then
+            COLOR = COLOR_HOT
+            imagebox_weather:set_image(ROOT.."images/hot/"..icon_name)
+        elseif temperature_number <= W_COLD then
+            COLOR = COLOR_COLD
+            imagebox_weather:set_image(ROOT.."images/cold/"..icon_name)
+        else
+            COLOR = COLOR_NORMAL
+            imagebox_weather:set_image(ROOT.."images/normal/"..icon_name)
+        end
+        textbox_weather:set_markup("<span foreground="..COLOR..">"..temperature..'</span>')
     end
-    recolor_icons(COLOR)
-    textbox_weather:set_markup("<span foreground="..COLOR..">"..temperature..'</span>')
-    imagebox_weather:set_image(ROOT.."images/"..icon_name)
 end
 
 function check_weather()
