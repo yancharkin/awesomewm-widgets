@@ -1,11 +1,10 @@
 local os = os
-local io = io
 
 local wibox = require("wibox")
 local awful = require("awful")
 
 local ROOT = os.getenv("HOME").."/.config/awesome/mail_checker/"
-local FONT = "Source\ Code\ Pro Regular 16"
+local FONT = "Source Code Pro Regular 16"
 local IMG_NONEW = ROOT.."images/nonew.svg"
 local IMG_NEW = ROOT.."images/new.svg"
 local IMG_MARGIN = 9
