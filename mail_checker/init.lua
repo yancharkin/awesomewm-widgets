@@ -38,10 +38,11 @@ local function update_mail_indicator(unread)
 end
 
 function check_mail()
-    mail_checker = io.popen("python "..ROOT.."mail_checker.py", "r")
-    unread = mail_checker:read()
-    mail_checker:close()
-    update_mail_indicator(unread)
+    awful.spawn.easy_async_with_shell("python "..ROOT.."mail_checker.py",
+        function(unread)
+            update_mail_indicator(unread)
+        end
+    )
 end
 
 awful.widget.watch(
