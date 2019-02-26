@@ -6,7 +6,7 @@ local awful = require("awful")
 local ROOT = os.getenv("HOME").."/.config/awesome/weather_checker/"
 local CHECK_INTERVAL = 900
 local IMG_MARGIN = 6
-local FONT = "Source\ Code\ Pro Regular 16"
+local FONT = "Source Code Pro Regular 16"
 local W_HOT = 29
 local W_COLD = -5
 local COLOR_HOT = "'#ffa560'"
@@ -32,6 +32,7 @@ local weather_checker = wibox.widget {
 
 function recolor_icons(color, dir)
     for i, filename in ipairs(icons_list) do
+        color = color:gsub("'", "")
         filepath = ROOT.."/images/"..dir.."/"..filename
         new_content = {}
         f = io.open(filepath, "r")
