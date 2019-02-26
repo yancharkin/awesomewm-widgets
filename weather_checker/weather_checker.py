@@ -4,9 +4,16 @@
 import sys
 from bs4 import BeautifulSoup
 import lxml
+import signal
+
+class TimeoutException(Exception): pass
 
 def get_weather():
     """Returns current temperature"""
+    def signal_timeout(signum, frame):
+        """Handler for timeout signal"""
+        raise TimeoutException("Time out.")
+
     with open(sys.path[0] + "/location", "r") as f:
         URL = f.readlines()[0].strip()
     try:
@@ -21,6 +28,9 @@ def get_weather():
         from urllib.request import HTTPError as urllib_httperror
 
     req = urllib_request(URL)
+
+    signal.signal(signal.SIGALRM, signal_timeout)
+    signal.alarm(10) # Maximum execution time
 
     try:
         page = urllib_urlopen(req)
@@ -38,6 +48,9 @@ def get_weather():
         print(output)
         return temperature, icon_name
 
+    except TimeoutException as e:
+        print(e)
+        return 1
     except urllib_urlerror as e:
         print("Error")
         #print(e.reason)
